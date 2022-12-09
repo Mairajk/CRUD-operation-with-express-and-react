@@ -22,9 +22,10 @@ const CRUD = () => {
     const [responseProducts, setResponseProducts] = useState([]);
     const [editingId, setEditingId] = useState(null);
     const [editingData, setEditingData] = useState({
-        editName: '',
-        editPrice: '',
-        editDescription: ''
+        editName: '78',
+        editPrice: '74',
+        editDescription: '10',
+        // editingId: null
     });
 
     // const [deleteId, setDeleteId] = useState(null);
@@ -136,11 +137,13 @@ const CRUD = () => {
             }),
 
         onSubmit: (updateValues) => {
+
+
             console.log("updateValues : ======>>>  ", updateValues);
             console.log("this is editing handler");
             setIsEditing(false);
 
-            axios.put(`${baseURL}/product/${editingId}`, {
+            axios.put(`${baseURL}/product/${editingData.editingId}`, {
                 name: updateValues.productName,
                 price: updateValues.price,
                 description: updateValues.description,
@@ -250,7 +253,7 @@ const CRUD = () => {
                             <div className="eachProduct" key={i}>
 
                                 {
-                                    (eachProduct.id === editingId && isEditing) ?
+                                    (isEditing && eachProduct.id === editingId) ?
 
                                         <div className="editingProduct">
                                             <form onSubmit={updateFormik.handleSubmit}>
@@ -316,21 +319,9 @@ const CRUD = () => {
                                                 onClick={() => {
                                                     setIsEditing(true);
                                                     setEditingId(eachProduct.id)
-                                                    setEditingData(
-                                                        (eachProduct.id === editingId) ?
-                                                            {
-                                                                editName: eachProduct.name,
-                                                                editPrice: eachProduct.price,
-                                                                editDescription: eachProduct.description
-                                                            }
-                                                            :
-                                                            {
-                                                                editName: '',
-                                                                editPrice: '',
-                                                                editDescription: ''
-                                                            }
-                                                    )
-                                                }}>
+                                                    console.log('editingData ===> ', editingData);
+                                                }}
+                                            >
                                                 Edit
                                             </button>
 
