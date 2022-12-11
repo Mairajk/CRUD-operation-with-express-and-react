@@ -21,12 +21,8 @@ const CRUD = () => {
     const [responseMessage, setResponseMessage] = useState(null);
     const [responseProducts, setResponseProducts] = useState([]);
     const [editingId, setEditingId] = useState(null);
-    const [editingData, setEditingData] = useState({
-        editName: '78',
-        editPrice: '74',
-        editDescription: '10',
-        // editingId: null
-    });
+    const [load, setLoad] = useState(false);
+    const [editingData, setEditingData] = useState({});
 
     // const [deleteId, setDeleteId] = useState(null);
 
@@ -42,7 +38,31 @@ const CRUD = () => {
                 console.log('Error: ', err);
             })
 
-    }, [])
+    }, [load])
+
+    const deleteProduct = (id) => {
+
+        console.log(' This is deleteProduct');
+        console.log(id);
+
+        axios.delete(`${baseURL}/product/${id}`)
+            .then((res) => {
+                console.log('delete response =====>', res);
+                setLoad(!load);
+            })
+            .catch((err) => {
+                console.log('delete Error =====>', err);
+            })
+    }
+
+    const editProduct = (product) => {
+        setIsEditing(!isEditing);
+        setEditingData(product);
+
+        updateFormik.setFieldValue('productName', product.name);
+        updateFormik.setFieldValue('price', product.price);
+        updateFormik.setFieldValue('description', product.description);
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -95,6 +115,8 @@ const CRUD = () => {
                     setTimeout(() => {
                         setResponseMessage(null)
                     }, 10000);
+                    setLoad(!load);
+
                     // console.log('responseProducts:====> ' ,responseProducts);
                 })
                 .catch((err) => {
@@ -143,41 +165,24 @@ const CRUD = () => {
             console.log("this is editing handler");
             setIsEditing(false);
 
-            axios.put(`${baseURL}/product/${editingData.editingId}`, {
+            console.log(' This is deleteProduct');
+            console.log(editingData.id);
+
+            axios.put(`${baseURL}/product/${editingData.id}`, {
                 name: updateValues.productName,
                 price: updateValues.price,
-                description: updateValues.description,
+                description: updateValues.description
             })
-                .then((response) => {
-                    // console.log(`response : ${response}`);///// return [object Object]
-                    console.log('`response : `', response.data);
-                    console.log(`data added`);
-                    setResponseMessage(response.data.message)
-                    setIsAdding(false);
-                    setTimeout(() => {
-                        setResponseMessage(null)
-                    }, 10000);
-                    // console.log('responseProducts:====> ' ,responseProducts);
+                .then((res) => {
+                    console.log('delete response =====>', res);
+                    setLoad(!load);
                 })
                 .catch((err) => {
-                    console.log(`Error : ${err}`);
+                    console.log('delete Error =====>', err);
                 })
         }
     });
 
-    const deleteProduct = (id) => {
-
-        console.log(' This is deleteProduct');
-        console.log(id);
-
-        axios.delete(`${baseURL}/product/${id}`)
-            .then((res) => {
-                console.log('delete response =====>', res);
-            })
-            .catch((err) => {
-                console.log('delete Error =====>', err);
-            })
-    }
 
     return (
         <div>
@@ -253,7 +258,7 @@ const CRUD = () => {
                             <div className="eachProduct" key={i}>
 
                                 {
-                                    (isEditing && eachProduct.id === editingId) ?
+                                    (isEditing && eachProduct.id === editingData.id) ?
 
                                         <div className="editingProduct">
                                             <form onSubmit={updateFormik.handleSubmit}>
@@ -317,8 +322,9 @@ const CRUD = () => {
                                             <button
                                                 className="editing"
                                                 onClick={() => {
-                                                    setIsEditing(true);
-                                                    setEditingId(eachProduct.id)
+                                                    // setIsEditing(true);
+                                                    // setEditingId(eachProduct.id)
+                                                    editProduct(eachProduct);
                                                     console.log('editingData ===> ', editingData);
                                                 }}
                                             >

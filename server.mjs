@@ -40,7 +40,7 @@ app.post('/product', (req, res) => {
         name: body.name,
         price: body.price,
         description: body.description,
-        id: new Date().getTime(),
+        id: `${new Date().getTime()}`,
         date: new Date().toString()
     })
 
